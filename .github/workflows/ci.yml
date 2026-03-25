@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.2
+      
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1.0.6
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+      
+      - name: Install Soroban CLI
+        run: cargo install --locked soroban-cli
+      
+      - name: Build Contracts
+        run: |
+          cd contracts/dice_game && soroban contract build
+          cd ../randomness_oracle && soroban contract build
+          cd ../dice_token && soroban contract build
+      
+      - name: Run Tests
+        run: |
+          cd contracts/dice_game && cargo test
+          cd ../randomness_oracle && cargo test
+          cd ../dice_token && cargo test
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v6.3.0
+        with:
+          node-version: '18'
+      
+      - name: Install Dependencies
+        run: cd frontend && npm install
+      
+      - name: Build
+        run: cd frontend && npm run build
+      
+      - name: Deploy to Vercel
+        if: github.ref == 'refs/heads/main'
+        run: |
+          npm install -g vercel
+          cd frontend && vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
