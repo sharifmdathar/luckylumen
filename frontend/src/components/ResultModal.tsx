@@ -1,8 +1,19 @@
-import React from 'react';
 import { Trophy, X } from 'lucide-react';
 import Dice from './Dice';
 
-const ResultModal = ({ result, onClose }) => {
+type Result = {
+  prediction: number;
+  actualRoll: number;
+  won: boolean;
+  payout: number;
+};
+
+type ResultModalProps = {
+  result: Result | null;
+  onClose: () => void;
+};
+
+const ResultModal = ({ result, onClose }: ResultModalProps) => {
   if (!result) return null;
 
   return (

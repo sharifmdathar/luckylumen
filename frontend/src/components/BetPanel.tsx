@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Coins } from 'lucide-react';
 
-const BetPanel = ({ onPlay, balance, isPlaying }) => {
+type BetPanelProps = {
+  onPlay: (betAmount: number, prediction: number) => void;
+  balance: number;
+  isPlaying: boolean;
+};
+
+const BetPanel = ({ onPlay, balance, isPlaying }: BetPanelProps) => {
   const [betAmount, setBetAmount] = useState(10);
   const [prediction, setPrediction] = useState(1);
 
@@ -25,9 +31,7 @@ const BetPanel = ({ onPlay, balance, isPlaying }) => {
 
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Bet Amount
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Bet Amount</label>
           <input
             type="number"
             value={betAmount}
@@ -40,9 +44,7 @@ const BetPanel = ({ onPlay, balance, isPlaying }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Pick Your Number
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-3">Pick Your Number</label>
           <div className="grid grid-cols-6 gap-2">
             {[1, 2, 3, 4, 5, 6].map((num) => (
               <button
@@ -68,7 +70,7 @@ const BetPanel = ({ onPlay, balance, isPlaying }) => {
           disabled={isPlaying}
           className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isPlaying ? 'Rolling...' : `Roll the Dice!`}
+          {isPlaying ? 'Rolling...' : 'Roll the Dice!'}
         </button>
 
         {prediction && (

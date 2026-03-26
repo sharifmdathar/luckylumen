@@ -1,7 +1,10 @@
-import React from 'react';
+type DiceProps = {
+  value: number | null;
+  isRolling?: boolean;
+};
 
-const Dice = ({ value, isRolling }) => {
-  const dots = {
+const Dice = ({ value, isRolling = false }: DiceProps) => {
+  const dots: Record<number, Array<[number, number]>> = {
     1: [[1, 1]],
     2: [[0, 0], [2, 2]],
     3: [[0, 0], [1, 1], [2, 2]],
@@ -12,20 +15,18 @@ const Dice = ({ value, isRolling }) => {
 
   return (
     <div className={`
-      w-24 h-24 bg-white rounded-2xl shadow-2xl 
+      w-24 h-24 bg-white rounded-2xl shadow-2xl
       grid grid-cols-3 gap-2 p-4
       ${isRolling ? 'animate-spin' : ''}
     `}>
       {[...Array(9)].map((_, i) => {
         const row = Math.floor(i / 3);
         const col = i % 3;
-        const hasDot = value && dots[value]?.some(([r, c]) => r === row && c === col);
-        
+        const hasDot = value !== null && dots[value]?.some(([r, c]) => r === row && c === col);
+
         return (
           <div key={i} className="flex items-center justify-center">
-            {hasDot && (
-              <div className="w-3 h-3 bg-purple-600 rounded-full" />
-            )}
+            {hasDot && <div className="w-3 h-3 bg-purple-600 rounded-full" />}
           </div>
         );
       })}
