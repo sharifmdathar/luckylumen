@@ -102,8 +102,8 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-4 md:px-8 md:py-8">
-      <div className="mx-auto max-w-6xl ll-shell rounded-3xl p-4 md:p-7">
+    <div className="min-h-screen px-4 py-4 md:px-8 md:py-8 flex items-center">
+      <div className="mx-auto w-full max-w-6xl ll-shell rounded-3xl p-4 md:p-7">
         <div className="md:hidden mb-4 ll-elevated px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
