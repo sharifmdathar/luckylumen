@@ -7,16 +7,32 @@ jobs:
   test:
     name: cargo test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        crate:
-          - contracts/dice_token
-          - contracts/randomness_oracle
     steps:
       - uses: actions/checkout@v6.0.2
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - run: cargo test --all-features
-        working-directory: ${{ matrix.crate }}
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+
+      - name: Build dice_token wasm
+        run: cargo build --target wasm32-unknown-unknown --release
+        working-directory: contracts/dice_token
+
+      - name: Build randomness_oracle wasm
+        run: cargo build --target wasm32-unknown-unknown --release
+        working-directory: contracts/randomness_oracle
+
+      - name: Test dice_token
+        run: cargo test --all-features
+        working-directory: contracts/dice_token
+
+      - name: Test randomness_oracle
+        run: cargo test --all-features
+        working-directory: contracts/randomness_oracle
+
+      - name: Test dice_game
+        run: cargo test --all-features
+        working-directory: contracts/dice_game
 
   formatting:
     name: cargo fmt
@@ -26,6 +42,7 @@ jobs:
         crate:
           - contracts/dice_token
           - contracts/randomness_oracle
+          - contracts/dice_game
     steps:
       - uses: actions/checkout@v6.0.2
       - uses: actions-rust-lang/setup-rust-toolchain@v1
