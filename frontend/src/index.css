@@ -1,14 +1,331 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+:root {
+  /* Brand palette */
+  --ll-primary: #ff5a2a;
+  --ll-secondary: #ffd166;
+  --ll-accent-a: #19c6b4;
+  --ll-accent-b: #f03a8c;
+  --ll-neutral-900: #0f111a;
+  --ll-neutral-800: #171b28;
+  --ll-neutral-700: #21283a;
+  --ll-neutral-300: #b8c2d9;
+  --ll-neutral-100: #edf1ff;
+  --ll-neutral-0: #ffffff;
+
+  /* Semantic colors */
+  --ll-success: #1dbf73;
+  --ll-warning: #ffb020;
+  --ll-error: #f25555;
+  --ll-info: #2ea8ff;
+
+  /* Surface hierarchy */
+  --ll-bg-page: #070a12;
+  --ll-bg-shell: #0e1320;
+  --ll-bg-card: #141c2d;
+  --ll-bg-card-elevated: #1b2539;
+  --ll-bg-overlay: rgba(5, 9, 18, 0.86);
+
+  /* Type */
+  --ll-font-headline: "Rajdhani", "Space Grotesk", "Segoe UI", sans-serif;
+  --ll-font-body: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", sans-serif;
+
+  /* Radius scale */
+  --ll-radius-sm: 0.5rem;
+  --ll-radius-md: 0.85rem;
+  --ll-radius-lg: 1.1rem;
+  --ll-radius-xl: 1.4rem;
+  --ll-radius-pill: 999px;
+
+  /* Spacing scale */
+  --ll-space-1: 0.25rem;
+  --ll-space-2: 0.5rem;
+  --ll-space-3: 0.75rem;
+  --ll-space-4: 1rem;
+  --ll-space-5: 1.25rem;
+  --ll-space-6: 1.5rem;
+  --ll-space-8: 2rem;
+
+  /* Border and shadow scale */
+  --ll-border-soft: 1px solid rgba(255, 255, 255, 0.16);
+  --ll-border-strong: 1px solid rgba(255, 209, 102, 0.45);
+  --ll-shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.3);
+  --ll-shadow-md: 0 14px 26px rgba(0, 0, 0, 0.35);
+  --ll-shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.45);
+  --ll-focus-ring: 0 0 0 2px rgba(7, 10, 18, 0.95), 0 0 0 4px rgba(255, 90, 42, 0.45);
+}
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--ll-font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255, 90, 42, 0.18) 0%, transparent 34%),
+    radial-gradient(circle at 84% 78%, rgba(25, 198, 180, 0.18) 0%, transparent 36%),
+    linear-gradient(165deg, #05070e 0%, #0a1020 55%, #070b14 100%);
+  color: var(--ll-neutral-100);
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.26;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 20% 35%, rgba(255, 209, 102, 0.18) 0 1px, transparent 1px),
+    radial-gradient(circle at 75% 70%, rgba(25, 198, 180, 0.2) 0 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px, 180px 180px, 200px 200px;
+  mix-blend-mode: screen;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--ll-font-headline);
+  letter-spacing: 0.02em;
+}
+
+.ll-shell {
+  background:
+    linear-gradient(160deg, rgba(255, 90, 42, 0.08), transparent 24%),
+    linear-gradient(340deg, rgba(25, 198, 180, 0.1), transparent 28%),
+    var(--ll-bg-shell);
+  border: var(--ll-border-soft);
+  box-shadow:
+    0 30px 70px rgba(4, 8, 17, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-radius: 1.8rem;
+  position: relative;
+}
+
+.ll-shell::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(255, 209, 102, 0.18);
+  border-radius: 1.4rem;
+  pointer-events: none;
+}
+
+.ll-surface {
+  background: var(--ll-bg-card);
+  border: var(--ll-border-soft);
+  border-radius: var(--ll-radius-xl);
+  box-shadow: var(--ll-shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.ll-surface::before,
+.ll-panel::before,
+.ll-elevated::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(255, 209, 102, 0.12), transparent 22%),
+    linear-gradient(315deg, rgba(25, 198, 180, 0.14), transparent 26%);
+}
+
+.ll-panel {
+  background: var(--ll-bg-card);
+  border: var(--ll-border-soft);
+  border-radius: var(--ll-radius-xl);
+  box-shadow: var(--ll-shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.ll-elevated {
+  background: var(--ll-bg-card-elevated);
+  border: var(--ll-border-soft);
+  border-radius: var(--ll-radius-lg);
+  box-shadow: var(--ll-shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.ll-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ll-space-2);
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--ll-radius-pill);
+  border: 1px solid rgba(255, 209, 102, 0.4);
+  background: linear-gradient(180deg, rgba(255, 209, 102, 0.14), rgba(255, 90, 42, 0.14));
+  color: var(--ll-neutral-100);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.ll-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ll-space-2);
+  padding: 0.55rem 0.85rem;
+  color: var(--ll-neutral-100);
+  background: #1f2a41;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.35), var(--ll-shadow-sm);
+  border-radius: var(--ll-radius-md);
+}
+
+.ll-input {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  border-radius: var(--ll-radius-md);
+  background: #0e1628;
+  color: var(--ll-neutral-100);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ll-input::placeholder {
+  color: #90a0c5;
+}
+
+.ll-input:hover {
+  border-color: rgba(255, 209, 102, 0.6);
+}
+
+.ll-input:focus-visible {
+  outline: none;
+  border-color: var(--ll-primary);
+  box-shadow: var(--ll-focus-ring);
+}
+
+.ll-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ll-btn {
+  border: 1px solid transparent;
+  border-radius: var(--ll-radius-md);
+  font-weight: 700;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
+}
+
+.ll-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ll-focus-ring);
+}
+
+.ll-btn:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+  transform: none;
+  filter: saturate(0.7);
+}
+
+.ll-btn-primary {
+  background: linear-gradient(120deg, #ff5a2a 0%, #f03a8c 55%, #ffb020 100%);
+  color: var(--ll-neutral-0);
+  box-shadow: 0 10px 18px rgba(240, 58, 140, 0.25);
+}
+
+.ll-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(240, 58, 140, 0.35);
+  filter: saturate(1.05);
+}
+
+.ll-btn-secondary {
+  background: linear-gradient(160deg, rgba(255, 209, 102, 0.22), rgba(25, 198, 180, 0.22));
+  color: var(--ll-neutral-100);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.ll-btn-secondary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(255, 209, 102, 0.7);
+}
+
+.ll-number-btn {
+  padding: 0.78rem 0;
+  border-radius: var(--ll-radius-sm);
+  font-weight: 700;
+  color: var(--ll-neutral-100);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #10192b;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.35);
+  transition: all 0.15s ease;
+}
+
+.ll-number-btn:hover:not(:disabled) {
+  border-color: rgba(255, 209, 102, 0.8);
+  background: #15223a;
+}
+
+.ll-number-btn[data-active="true"] {
+  color: #130d00;
+  background: linear-gradient(180deg, #ffd166 0%, #ffb020 100%);
+  border-color: rgba(255, 209, 102, 0.95);
+  box-shadow: 0 10px 16px rgba(255, 176, 32, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.ll-kicker {
+  color: #9cb0da;
+  font-size: 0.83rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ll-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  background: #111a2c;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--ll-radius-md);
+  padding: 0.7rem 0.8rem;
+}
+
+.ll-overlay {
+  background: var(--ll-bg-overlay);
+  backdrop-filter: blur(4px);
+}
+
+.ll-ticket-corner {
+  clip-path: polygon(0 14px, 14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px));
+}
+
+.ll-roll {
+  animation: ll-rolling 0.45s linear infinite;
+}
+
+.ll-pop {
+  animation: ll-pop-in 0.3s ease-out;
+}
+
+@keyframes ll-rolling {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ll-pop-in {
+  0% { transform: scale(0.92); }
+  100% { transform: scale(1); }
 }

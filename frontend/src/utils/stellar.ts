@@ -1,5 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { getAddress, isConnected } from '@stellar/freighter-api';
+import { getAddress, isConnected, requestAccess } from '@stellar/freighter-api';
 
 export const NETWORK_PASSPHRASE = StellarSdk.Networks.TESTNET;
 export const HORIZON_URL = 'https://horizon-testnet.stellar.org';
@@ -29,13 +29,111 @@ type HorizonLedgersResponse = {
   };
 };
 
-export async function connectWallet(): Promise<string> {
-  const { isConnected: connected } = await isConnected();
-  if (!connected) {
-    throw new Error('Freighter wallet not found');
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => reject(new Error(message)), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timer) {
+      clearTimeout(timer);
+    }
+  }
+}
+
+function extractAddress(payload: unknown): string | null {
+  if (typeof payload === 'string' && payload.trim()) {
+    return payload;
+  }
+  if (!payload || typeof payload !== 'object') {
+    return null;
   }
 
-  const { address } = await getAddress();
+  const candidate = payload as {
+    address?: unknown;
+    publicKey?: unknown;
+    data?: { address?: unknown; publicKey?: unknown };
+  };
+
+  const fromTopLevel =
+    (typeof candidate.address === 'string' && candidate.address) ||
+    (typeof candidate.publicKey === 'string' && candidate.publicKey) ||
+    null;
+  if (fromTopLevel) {
+    return fromTopLevel;
+  }
+
+  const fromData =
+    (typeof candidate.data?.address === 'string' && candidate.data.address) ||
+    (typeof candidate.data?.publicKey === 'string' && candidate.data.publicKey) ||
+    null;
+  return fromData;
+}
+
+function extractErrorMessage(payload: unknown): string | null {
+  if (!payload || typeof payload !== 'object') {
+    return null;
+  }
+  const maybe = payload as {
+    error?: unknown;
+    message?: unknown;
+    data?: { error?: unknown; message?: unknown };
+  };
+  const value =
+    maybe.error ??
+    maybe.message ??
+    maybe.data?.error ??
+    maybe.data?.message;
+  return typeof value === 'string' && value.trim() ? value : null;
+}
+
+export async function getConnectedWalletAddress(): Promise<string | null> {
+  try {
+    const { isConnected: connected } = await withTimeout(
+      isConnected(),
+      5000,
+      'Freighter did not respond while checking connection.',
+    );
+    if (!connected) {
+      return null;
+    }
+
+    const addressResponse = await withTimeout(
+      getAddress(),
+      5000,
+      'Freighter did not respond while reading address.',
+    );
+    return extractAddress(addressResponse);
+  } catch {
+    return null;
+  }
+}
+
+export async function connectWallet(): Promise<string> {
+  const { isConnected: connected } = await withTimeout(
+    isConnected(),
+    8000,
+    'Freighter did not respond while checking connection.',
+  );
+  if (!connected) {
+    throw new Error('Freighter is not connected. Open the extension and allow this site.');
+  }
+
+  const accessResponse = await withTimeout(
+    requestAccess(),
+    12000,
+    'Freighter did not respond. Open the extension popup and approve access.',
+  );
+
+  const address = extractAddress(accessResponse);
+  if (!address) {
+    const apiError = extractErrorMessage(accessResponse);
+    throw new Error(apiError ?? 'Freighter returned an unexpected account response. Unlock Freighter and try again.');
+  }
   return address;
 }
 

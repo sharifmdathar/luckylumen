@@ -14,11 +14,14 @@ const Dice = ({ value, isRolling = false }: DiceProps) => {
   };
 
   return (
-    <div className={`
-      w-24 h-24 bg-white rounded-2xl shadow-2xl
-      grid grid-cols-3 gap-2 p-4
-      ${isRolling ? 'animate-spin' : ''}
-    `}>
+    <div
+      className={`
+        w-32 h-32 md:w-40 md:h-40 rounded-[1.6rem]
+        bg-[var(--ll-bg-card-elevated)] grid grid-cols-3 gap-2.5 p-5 md:p-6
+        border border-[rgba(255,209,102,0.38)] shadow-[var(--ll-shadow-lg)]
+        ${isRolling ? 'll-roll' : 'll-pop'}
+      `}
+    >
       {[...Array(9)].map((_, i) => {
         const row = Math.floor(i / 3);
         const col = i % 3;
@@ -26,7 +29,7 @@ const Dice = ({ value, isRolling = false }: DiceProps) => {
 
         return (
           <div key={i} className="flex items-center justify-center">
-            {hasDot && <div className="w-3 h-3 bg-purple-600 rounded-full" />}
+            {hasDot && <div className="w-4 h-4 md:w-5 md:h-5 bg-[var(--ll-secondary)] rounded-full shadow-md" />}
           </div>
         );
       })}
