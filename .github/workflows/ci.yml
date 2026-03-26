@@ -51,3 +51,28 @@ jobs:
       - name: Rustfmt Check
         run: cargo fmt -- --check
         working-directory: ${{ matrix.crate }}
+
+  frontend:
+    name: frontend checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v6.0.2
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Frontend tests (if present)
+        run: |
+          if rg -q '"test"\\s*:' package.json; then
+            bun run test
+          else
+            echo "No test script defined, skipping."
+          fi
+      - name: Frontend lint
+        run: bun run lint
+      - name: Frontend build
+        run: bun run build
